@@ -392,7 +392,13 @@ public abstract class WebSocketClient extends AbstractWebSocket implements Runna
 			socket.setReuseAddress( isReuseAddr() );
 
 			if( !socket.isBound() ) {
-				socket.connect( new InetSocketAddress( uri.getHost(), getPort() ), connectTimeout );
+				InetSocketAddress addr;
+                                if(proxy == Proxy.NO_PROXY) {
+                                    addr = new InetSocketAddress( uri.getHost(), getPort() );
+                                } else {
+                                    addr = InetSocketAddress.createUnresolved( uri.getHost(), getPort() );
+                                }
+				socket.connect( addr, connectTimeout );
 			}
 
 			// if the socket is set by others we don't apply any TLS wrapper
